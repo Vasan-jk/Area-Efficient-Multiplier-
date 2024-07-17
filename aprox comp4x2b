@@ -1,0 +1,13 @@
+module aproxcomp4x2b(c,s, x4,x3,x2,x1);
+    output s,c;  
+    input x4,x3,x2,x1;
+
+	 wire w1,w2;
+
+	  nor(w1,x1,x2);
+	  nor(w2,x3,x4);
+	  nor(c,w1,w2);
+	  nand(s,w1,w2);
+
+
+endmodule
