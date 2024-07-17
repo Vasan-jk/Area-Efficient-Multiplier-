@@ -1,0 +1,194 @@
+`timescale 1ns / 1ps
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:    11:10:43 03/25/24
+// Design Name:    
+// Module Name:    mul8bit
+// Project Name:   
+// Target Device:  
+// Tool versions:  
+// Description:
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+module mul8bit(p, a,b);
+    output [15:0] p;
+    input [7:0] a,b;
+wire [64:1]w;
+wire [21:0]s;
+wire [9:1]cout;
+wire [5:1]n;
+wire [30:0]c; 
+
+ 	and(w[1],a[0],b[0]);
+	and(w[2],a[0],b[1]);
+	and(w[3],a[0],b[2]);
+	and(w[4],a[0],b[3]);
+	and(w[5],a[0],b[4]);
+	and(w[6],a[0],b[5]);
+	and(w[7],a[0],b[6]);
+	and(w[8],a[0],b[7]);
+
+  	and(w[9],a[1],b[0]);
+	and(w[10],a[1],b[1]);
+	and(w[11],a[1],b[2]);
+	and(w[12],a[1],b[3]);
+	and(w[13],a[1],b[4]);
+	and(w[14],a[1],b[5]);
+	and(w[15],a[1],b[6]);
+	and(w[16],a[1],b[7]);
+
+  	and(w[17],a[2],b[0]);
+	and(w[18],a[2],b[1]);
+	and(w[19],a[2],b[2]);
+	and(w[20],a[2],b[3]);
+	and(w[21],a[2],b[4]);
+	and(w[22],a[2],b[5]);
+	and(w[23],a[2],b[6]);
+	and(w[24],a[2],b[7]);
+
+	and(w[25],a[3],b[0]);
+	and(w[26],a[3],b[1]);
+	and(w[27],a[3],b[2]);
+	and(w[28],a[3],b[3]);
+	and(w[29],a[3],b[4]);
+	and(w[30],a[3],b[5]);
+	and(w[31],a[3],b[6]);
+	and(w[32],a[3],b[7]);
+
+	and(w[33],a[4],b[0]);
+	and(w[34],a[4],b[1]);
+	and(w[35],a[4],b[2]);
+	and(w[36],a[4],b[3]);
+	and(w[37],a[4],b[4]);
+	and(w[38],a[4],b[5]);
+	and(w[39],a[4],b[6]);
+	and(w[40],a[4],b[7]);
+
+	and(w[41],a[5],b[0]);
+	and(w[42],a[5],b[1]);
+	and(w[43],a[5],b[2]);
+  	and(w[44],a[5],b[3]);
+	and(w[45],a[5],b[4]);
+	and(w[46],a[5],b[5]);
+	and(w[47],a[5],b[6]);
+	and(w[48],a[5],b[7]);
+
+	and(w[49],a[6],b[0]);
+	and(w[50],a[6],b[1]);
+	and(w[51],a[6],b[2]);
+	and(w[52],a[6],b[3]);
+	and(w[53],a[6],b[4]);
+	and(w[54],a[6],b[5]);
+	and(w[55],a[6],b[6]);
+	and(w[56],a[6],b[6]);
+
+	and(w[57],a[7],b[0]);
+  	and(w[58],a[7],b[1]);
+	and(w[59],a[7],b[2]);
+	and(w[60],a[7],b[3]);
+	and(w[61],a[7],b[4]);
+	and(w[62],a[7],b[5]);
+	and(w[63],a[7],b[6]);
+	and(w[64],a[7],b[7]);
+
+
+	assign p[0] = 1'b0;
+	assign p[1] = 1'b0;
+	assign p[2] = 1'b0;
+	assign p[3] = 1'b0;
+ // stage 1
+  	HA h1(s[0],c[0],w[5],w[12]);
+	aproxcomp4x2c c1(s[1],c[1],w[6],w[13],w[20],w[27]);
+	aproxcomp4x2c c2(s[2],c[2],w[7],w[14],w[21],w[28]);
+	HA h2(s[3],c[3],w[35],w[42]);
+	aproxcomp4x2c c3(s[4],c[4],w[8],w[15],w[22],w[29]);
+	aproxcomp4x2c c4(s[5],c[5],w[36],w[43],w[50],w[57]);
+
+	exactcomp4x2 e1(s[6],c[6],cout[1],w[16],w[23],w[30],w[37],n[4]);
+	exactcomp4x2 e2(s[7],c[7],cout[2],w[44],w[51],w[58],1'b0,n[5]);
+	exactcomp4x2 e3(s[8],c[8],cout[3],w[24],w[31],w[38],w[45],cout[1]);
+	HA f1(s[9],c[9],w[52],w[59]);
+	exactcomp4x2 e4(s[10],c[10],cout[4],w[32],w[39],w[46],w[53],cout[3]);																				  
+	FA f3(s[11],c[11],w[40],w[47],cout[4]);
+
+//error detection module
+	  and(n[1],w[22],w[29]);
+	  and(n[2],w[50],w[57]);
+	  or(n[3],n[1],n[2]);
+	  and(n[4],w[22],w[29]);
+	  and(n[5],w[50],w[57]);
+
+
+//stage 2
+	aproxcomp4x2c c5(s[12],c[12],s[0],w[19],w[26],w[33]);
+	aproxcomp4x2c c6(s[13],c[13],s[1],c[0],w[34],w[41]);
+	aproxcomp4x2c c7(s[14],c[14],s[2],c[1],s[3],w[49]);
+	aproxcomp4x2c c8(s[15],c[15],s[4],c[2],s[5],c[3]);
+	exactcomp4x2 e5(s[16],c[16],cout[5],s[6],c[4],s[7],c[5],n[3]);
+	exactcomp4x2 e6(s[17],c[17],cout[6],s[8],c[6],s[9],c[7],cout[5]);
+	exactcomp4x2 e7(s[18],c[18],cout[7],s[10],c[8],c[9],w[60],cout[6]);
+	exactcomp4x2 e8(s[19],c[19],cout[8],s[11], c[10],w[54],w[61],cout[7]);
+	exactcomp4x2 e9(s[20],c[20],cout[9],w[48],w[55],w[62],c[11],cout[8]);
+	FA h14(s[21],c[21],w[56],w[63],cout[9]);
+
+//stage 3
+	assign p[4]=s[12];
+	HA h6(p[5],c[22],s[13],c[12]);
+	FA f7(p[6],c[23],s[14],c[13],c[22]);
+	FA f8(p[7],c[24],s[15],c[14],c[23]);
+	FA f9(p[8],c[25],s[16],c[15],c[24]);
+	FA f10(p[9],c[26],s[17],c[16],c[25]);
+	FA f11(p[10],c[27],s[18],c[17],c[26]);
+	FA f12(p[11],c[28],s[19],c[18],c[27]);
+	FA f13(p[12],c[29],s[20],c[19],c[28]);
+	FA f14(p[13],c[30],s[21],c[20],c[29]);
+	FA f15(p[14],p[15],w[64],c[21],c[30]);
+
+
+endmodule
+
+module disformul(clk,clr,a,b,reg1);
+  input [7:0]a,b;
+  input clk,clr;
+  output reg [15:0] reg1;
+  wire [15:0] ms,ls;
+  mul8bit m1(ls,a,b);
+ assign ms=a*b;
+//m53 m2 (a,ms);
+ always @(posedge clk)
+ begin 
+   if (clr)
+     reg1=16'b0000000000000000;
+   else if (ms>= ls) 
+   reg1= ms - ls;
+else
+reg1= ls - ms;
+end
+endmodule
+
+
+module accummul8x8 (clr,clk,a,b,Q); 
+input clr,clk;
+input  [7:0]a,b; 
+output reg [31:0] Q; 
+wire    [14:0] tmp;
+ //reg    [31:0] tmp1; 
+ disformul h1(clk,clr,a,b,tmp);
+  always @(posedge clk) 
+    begin 
+      if (clr) 
+        Q = 32'b00000000000000000000000000000000; 
+      else 
+        Q = Q + tmp; 
+		     //Q = tmp1; 
+
+    end 
+endmodule
