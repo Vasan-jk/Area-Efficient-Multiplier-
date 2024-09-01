@@ -1,0 +1,37 @@
+module disformul(clk,clr,a,b,reg1);
+  input [7:0]a,b;
+  input clk,clr;
+  output reg [15:0] reg1;
+  wire [15:0] ms,ls;
+  mul8bit m1(ls,a,b);
+ assign ms=a*b;
+//m53 m2 (a,ms);
+ always @(posedge clk)
+ begin 
+   if (clr)
+     reg1=16'b0000000000000000;
+   else if (ms>= ls) 
+   reg1= ms - ls;
+else
+reg1= ls - ms;
+end
+endmodule
+
+
+module accummul8x8 (clr,clk,a,b,Q); 
+input clr,clk;
+input  [7:0]a,b; 
+output reg [31:0] Q; 
+wire    [14:0] tmp;
+ //reg    [31:0] tmp1; 
+ disformul h1(clk,clr,a,b,tmp);
+  always @(posedge clk) 
+    begin 
+      if (clr) 
+        Q = 32'b00000000000000000000000000000000; 
+      else 
+        Q = Q + tmp; 
+		     //Q = tmp1; 
+
+    end 
+endmodule
